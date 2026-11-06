@@ -20,14 +20,20 @@
                 <div class="col-md-4">
                     <div class="card h-100 shadow-sm border-0 border-start border-primary border-4">
                         <div class="card-body">
-                            <h3 class="card-title h5 mb-3">{{ categorie.nom }}</h3>
+                            <h3 class="card-title h5 mb-3">
+                                <a href="{{ path('app_categorie_detail', {id: categorie.id}) }}" class="text-decoration-none">{{ categorie.nom }}</a>
+                            </h3>
                             {% if categorie.description %}
                                 <p class="card-text text-muted small">{{ categorie.description }}</p>
                             {% endif %}
                         </div>
-                        <div class="card-footer bg-transparent border-0 pt-0">
+                        <div class="card-footer bg-transparent border-0 pt-0 d-flex justify-content-between align-items-center">
                             <span class="badge bg-secondary rounded-pill">
                                 {{ categorie.articles|length }} article(s)
+                            </span>
+                            <span>
+                                <a href="{{ path('app_categorie_detail', {id: categorie.id}) }}" class="btn btn-outline-primary btn-sm">Voir</a>
+                                <a href="{{ path('app_categorie_modifier', {id: categorie.id}) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
                             </span>
                         </div>
                     </div>
