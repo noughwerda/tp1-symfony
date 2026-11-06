@@ -12,13 +12,29 @@
         {% else %}
             <span class="badge bg-warning text-dark ms-2">Brouillon</span>
         {% endif %}
+        {% if article.categorie %}
+            <span class="badge bg-info text-dark ms-2">{{ article.categorie.nom }}</span>
+        {% endif %}
     </p>
 
-    <div class="lead mb-5">
+    <div class="lead mb-5 border-bottom pb-4">
         {{ article.contenu }}
     </div>
 
-    <a href="{{ path('app_articles') }}" class="btn btn-outline-secondary">
-        ← Retour à la liste
-    </a>
+    {# Boutons d'action #}
+    <div class="d-flex gap-2 align-items-center">
+        <a href="{{ path('app_article_modifier', {id: article.id}) }}" class="btn btn-primary">
+            Modifier
+        </a>
+
+        <form method="post" action="{{ path('app_article_supprimer', {id: article.id}) }}"
+              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');" class="d-inline">
+            <input type="hidden" name="_token" value="{{ csrf_token('supprimer_' ~ article.id) }}">
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+        </form>
+
+        <a href="{{ path('app_articles') }}" class="btn btn-outline-secondary">
+            ← Retour à la liste
+        </a>
+    </div>
 {% endblock %}
