@@ -10,14 +10,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ArticlesController extends AbstractController
 {
     #[Route('/articles/nouveau', name: 'app_article_nouveau')]
+    #[IsGranted('ROLE_USER')]
     public function nouveau(Request $request, EntityManagerInterface $em): Response
     {
         $article = new Article();
         $article->setDateCreation(new \DateTime());
+        $article->setAuteurUser($this->getUser()); // NEW 5.2
 
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
@@ -55,8 +58,14 @@ class ArticlesController extends AbstractController
     }
 
     #[Route('/articles/{id}/modifier', name: 'app_article_modifier', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_USER')] // NEW 5.3
     public function modifier(Article $article, Request $request, EntityManagerInterface $em): Response
     {
+        // NEW 5.3 : seul l'auteur ou un admin peut modifier
+        if ($this->getUser() !== $article->getAuteurUser() && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas l\'auteur !');
+        }
+
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
